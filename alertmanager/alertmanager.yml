@@ -1,0 +1,13 @@
+route:
+  # canales
+  receiver: admin
+
+receivers:
+- name: admin
+  email_configs:
+  - to: 'example@gmail.com'
+    from: 'example@gmail.com'
+    smarthost: smtp.gmail.com:587
+    auth_username: 'example@gmail.com'
+    auth_identity: 'example@gmail.com'
+    auth_password: 'fqkvkumorgaqgkat'
