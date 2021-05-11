@@ -31,9 +31,13 @@ scrape_configs:
     - targets: ['localhost:9090']
     
   - job_name: 'node_exporter'
-    static_configs:
-    - targets: ['localhost:9100']
-  
+    file_sd_configs:
+    - files:
+      - file_sd.yml
+    relabel_configs:
+      - source_labels: [team]
+        regex: l.*
+        action: drop
     
   - job_name: 'wmi_exporter'
     static_configs:
@@ -42,6 +46,11 @@ scrape_configs:
   - job_name: 'prom_python_app'
     static_configs:
     - targets: ['localhost:8001'] 
+
+  - job_name: 'pushgateway'
+    honor_labels: true
+    static_configs:
+    - targets: ['localhost:9091']
     
   #- job_name: 'prom_go_app'
     #static_configs:
@@ -50,6 +59,11 @@ scrape_configs:
   - job_name: 'blackbox_exporter'
     static_configs:
     - targets: ['localhost:9115'] 
+
+  - job_name: 'mysql_exporter'
+    static_configs:
+    - targets: ['localhost:9104']
+
 
   - job_name: 'prometheus-website'
     static_configs:
@@ -67,3 +81,14 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: localhost:9115  # The blackbox exporter's real hostname:port.
+
+  - job_name: 'ec2'
+    ec2_sd_configs:
+      - access_key: AIADFGHK6QLLVDF1B6U
+        secret_key: H5cIdfGzbxG3ql64h65u5nd6rfy5ZbiXZ/JjgA82
+        region: ap-south-1
+    relabel_configs:
+      - source_labels: [__meta_ec2_public_ip]
+        regex: '(.*)'
+        replacement: '${1}:9100'
+        target_label: __address__
